@@ -1,0 +1,8 @@
+2023-10-04 13:58:19  [ http-nio-9999-exec-4:0 ] - [ ERROR ]  com.alibaba.fastjson.JSONException: syntax error, pos 1, line 1, column 2string
+2023-10-04 14:01:17  [ http-nio-9999-exec-7:178000 ] - [ ERROR ]  com.alibaba.fastjson.JSONException: syntax error, pos 8, line 1, column 9{data: string}
+2023-10-04 14:48:06  [ http-nio-9999-exec-6:0 ] - [ ERROR ]  com.alibaba.fastjson.JSONException: syntax error, pos 8, line 1, column 9{data: string}
+2023-10-04 14:51:05  [ http-nio-9999-exec-4:1 ] - [ ERROR ]  com.alibaba.fastjson.JSONException: syntax error, pos 8, line 1, column 9{data: string}
+2023-10-04 16:39:44  [ http-nio-9999-exec-8:0 ] - [ ERROR ]  /localhost:9092/test/test.json 创建失败
+2023-10-04 16:42:26  [ http-nio-9999-exec-3:0 ] - [ ERROR ]  /localhost:9092/test/test.json 创建失败
+2023-10-04 18:07:34  [ http-nio-9999-exec-9:0 ] - [ ERROR ]  org.apache.spark.sql.catalyst.analysis.TempTableAlreadyExistsException: Temporary table 'test' already exists;
+2023-10-04 18:08:36  [ http-nio-9999-exec-2:61987 ] - [ ERROR ]  org.apache.spark.sql.catalyst.analysis.TempTableAlreadyExistsException: Temporary table 'test' already exists;
