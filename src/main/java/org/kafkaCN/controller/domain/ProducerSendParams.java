@@ -19,6 +19,10 @@ public class ProducerSendParams {
     @ApiParam(value = "分区数")
     Integer partitions;
 
+
+    @ApiParam(value = "备份数")
+    Short replication;
+
     @ApiParam(value = "分区关键字")
     String key;
 
@@ -28,6 +32,14 @@ public class ProducerSendParams {
     @ApiParam(value = "数据")
     String data;
 
+    @ApiParam(value = "ip")
+    String host;
+
+    @ApiParam(value = "端口号")
+    Integer port;
+
+    @ApiParam(value = "是否异步发送")
+    Boolean sync;
 
 
     public ProducerRecord<String,String> getProducerRecord(){

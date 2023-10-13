@@ -3,6 +3,7 @@ package org.kafkaCN.service.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import org.apache.kafka.clients.admin.KafkaAdminClient;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -10,16 +11,19 @@ import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.KafkaException;
 import org.apache.kafka.common.PartitionInfo;
+import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.errors.TimeoutException;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.kafkaCN.common.Logger;
+import org.kafkaCN.controller.domain.PollParams;
 import org.kafkaCN.service.KafkaConsumerService;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.*;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.time.Duration;
 import java.util.*;
 
@@ -31,7 +35,6 @@ import java.util.*;
  */
 @Service
 public class KafkaConsumerServiceImpl implements KafkaConsumerService {
-
     org.apache.log4j.Logger logger = Logger.getInstance();
     private Map<String, Object> consumerConfigs(String addr,String groupId) {
         Map<String, Object> props = new HashMap<>();
@@ -55,18 +58,40 @@ public class KafkaConsumerServiceImpl implements KafkaConsumerService {
     }
 
     @Override
-    public JSONArray dataExample(KafkaConsumer<String, String> consumer) {
+    public JSONArray dataExample(KafkaConsumer<String, String> consumer, PollParams pollParams) {
         if(consumer == null){
             return null;
         }
+//        offset
+        if(pollParams.getPollType()==0){
+           for(TopicPartition topicPartition: consumer.assignment()){
+               consumer.seek(topicPartition,pollParams.getOffset());
+           }
+        }
+//        latest
+        else if (pollParams.getPollType()==1) {
+            consumer.seekToEnd(consumer.assignment());
+        }
+//        earliest
+        else {
+            consumer.seekToBeginning(consumer.assignment());
+        }
         JSONArray JSONArray = new JSONArray();
-        ConsumerRecords<String, String> records = consumer.poll(Duration.ofSeconds(10));
+        ConsumerRecords<String, String> records = consumer.poll(Duration.ofSeconds(pollParams.getDuration()));
         try {
             for (ConsumerRecord<String, String> record : records) {
-                System.out.println("从哪个分片中获取数据: " + record.partition() + ";获取数据: " + record.value());
-                boolean add = JSONArray.add(JSONObject.parseObject(record.value()));
-                if(!add){
-                    logger.error("记录异常，不符合json格式");
+//                获取record的offset
+                long offset = record.offset();
+//                消息格式化json
+                try {
+                    JSONObject jsonObject = JSONObject.parseObject(record.value());
+                    JSONObject ret = new JSONObject();
+                    ret.put("offset",offset);
+                    ret.put("value",jsonObject);
+                    ret.put("partition",record.partition());
+                    System.err.println(ret);
+                    JSONArray.add(ret);
+                }catch (Exception e){
                     System.err.println("记录异常，不符合json格式");
                 }
             }

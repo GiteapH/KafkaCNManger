@@ -88,7 +88,6 @@ public class JSONHelper {
             log.debug("不在config目录，进入classpath目录查找");
             file = ResourceUtils.getFile("classpath:" + filename);
         }
-        System.out.println(filename);
         return file;
     }
 

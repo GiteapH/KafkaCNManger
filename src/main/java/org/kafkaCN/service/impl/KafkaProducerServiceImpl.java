@@ -25,6 +25,15 @@ public class KafkaProducerServiceImpl implements KafkaProducerService {
         props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, addr);
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+        props.put(ProducerConfig.RETRIES_CONFIG,2);
+        return props;
+    }
+
+    private Map<String, Object> producerConfigsListener(String advitised,String addr) {
+        Map<String, Object> props = new HashMap<>();
+        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, addr);
+        props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         return props;
     }
 
@@ -36,5 +45,6 @@ public class KafkaProducerServiceImpl implements KafkaProducerService {
     public KafkaTemplate<String, String> kafkaTemplate(String addr) {
         return new KafkaTemplate<>(producerFactory(addr));
     }
+
 
 }

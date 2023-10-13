@@ -32,6 +32,11 @@ public class Result implements Serializable {
         return new Result(code, msg, null);
     }
 
+    public static Result error(Object data) {
+        return new Result(CODE_SUCCESS, "操作失败", data);
+    }
+
+
     public static Result error(String msg) {
         return new Result(CODE_SYS_ERROR, msg, null);
     }

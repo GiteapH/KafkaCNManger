@@ -24,18 +24,41 @@ public class JSONUtils {
         }
     }
 
+
+//
+//   递归判断是否存在需要的键
+    private static boolean checkContainKey(String key,JSONObject jsonObject){
+        System.err.println(jsonObject);
+        for(String jsonKey:jsonObject.keySet()) {
+            if (jsonKey.equals(key)) {
+                System.out.println(key);
+                return true;
+            }
+            try {
+//                强制转换jsonobject
+                JSONObject next = jsonObject.getJSONObject(jsonKey);
+                return checkContainKey(key,next);
+            }catch (Exception e) {
+//                不是object
+                continue;
+            }
+        }
+        return false;
+    }
+
+
     public static File saveFile(JSONArray jsonArray,String path,String ...keys) {
-        System.err.println(Arrays.toString(keys));
         //        滤除不存在主要的关键字的对象
         JSONArray array = new JSONArray();
         for(int i=0;i<jsonArray.size(); i++){
             JSONObject json = (JSONObject) jsonArray.get(i);
+            json = json.getJSONObject("value");
 //            判断对象中是否有key
-            boolean f = true;
+            boolean f = false;
             for(String key:keys){
-//                不存在必须的key
-                if(json.getString(key)==null){
-                    f = false;
+//                存在必须的key
+                if(json.getString(key)!=null){
+                    f = true;
                     break;
                 }
             }
