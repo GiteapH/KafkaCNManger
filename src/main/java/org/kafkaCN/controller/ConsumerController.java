@@ -54,6 +54,7 @@ public class ConsumerController {
     @Resource
     KafkaAdminService kafkaAdminService;
 
+    public static String currentTopic = "";
     private final Map<String,KafkaConsumer<String, String>> kafkaTemplates = new ConcurrentHashMap<>();
 
     private final Set<String>  groupsStates = new CopyOnWriteArraySet<>();
@@ -62,7 +63,7 @@ public class ConsumerController {
     @PostMapping("/addConsumer/{addr}/{groupId}/{topic}")
     public Result addConsumer(@PathVariable(value = "addr") String addr,@PathVariable(value = "groupId") String groupId,@PathVariable(value = "topic") String topic){
         String[] hp = addr.split(":");
-
+        currentTopic = topic;
 //       添加已存在的消费组,验证消费组状态
         if(groupsStates.contains(groupId)){
             //            已创建连接的验证group状态

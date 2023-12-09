@@ -26,7 +26,7 @@ import java.util.Map;
  */
 @Component
 @Slf4j
-public class ClusterHander extends AbstractWebSocketHandler {
+public class TopicHander extends AbstractWebSocketHandler {
 
     private Map<String,String> encodeQuery(String query){
         HashMap<String,String> queryMap = new HashMap<>();
@@ -41,7 +41,7 @@ public class ClusterHander extends AbstractWebSocketHandler {
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         log.info("建立ws连接");
         Map<String, String> queryMap = encodeQuery(session.getUri().getQuery());
-        ClusterSessionManager.add(queryMap.get("host")+queryMap.get("port")+"?cluster",session);
+        ClusterSessionManager.add(queryMap.get("host")+queryMap.get("port")+"?topic",session);
         try {
             JMXMBean.create(queryMap.get("host"), Integer.valueOf(queryMap.get("port")));
         } catch (ContainException ignored) {
@@ -71,7 +71,7 @@ public class ClusterHander extends AbstractWebSocketHandler {
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         Map<String, String> queryMap = encodeQuery(session.getUri().getQuery());
-        ClusterSessionManager.removeAndClose(queryMap.get("host")+queryMap.get("port")+"?cluster");
+        ClusterSessionManager.removeAndClose(queryMap.get("host")+queryMap.get("port")+"?topic");
         JMXConnector remove = JMXMBean.mBeanServerConnectionMap.remove(queryMap.get("host") + queryMap.get("port"));
         remove.close();
     }

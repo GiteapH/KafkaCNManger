@@ -1,9 +1,12 @@
 package org.kafkaCN.common;
 
-import org.apache.catalina.Cluster;
 import org.kafkaCN.sockets.ClusterHander;
+import org.kafkaCN.sockets.TopicHander;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.TaskScheduler;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
@@ -16,15 +19,26 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
  */
 @Configuration
 @EnableWebSocket
-public class WebSocketConfig implements WebSocketConfigurer {
+public class ClusterWebSocketConfigurer implements WebSocketConfigurer {
+
+    @Autowired
+    private TopicHander topicHander;
 
     @Autowired
     private ClusterHander clusterHander;
+    @Bean
+    public TaskScheduler taskScheduler() {
+        ThreadPoolTaskScheduler scheduling = new ThreadPoolTaskScheduler();
+        scheduling.setPoolSize(10);
+        scheduling.initialize();
+        return scheduling;
+    }
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
         registry
-                .addHandler(clusterHander, "cluster")
+                .addHandler(topicHander, "topicMonitor")
+                .addHandler(clusterHander,"clusterMonitor")
                 //允许跨域
                 .setAllowedOrigins("*");
     }

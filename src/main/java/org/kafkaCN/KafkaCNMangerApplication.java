@@ -10,6 +10,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @MapperScan("org.kafkaCN.mapper")
 public class KafkaCNMangerApplication {
 
+    public static int tempTag=0;
     public static void main(String[] args) {
         SpringApplication.run(KafkaCNMangerApplication.class, args);
     }
